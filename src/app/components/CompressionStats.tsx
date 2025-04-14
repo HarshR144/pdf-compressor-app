@@ -5,6 +5,7 @@ interface CompressionStatsProps {
   compressedSize: number;
   compressionRatio: number;
   compressionTime?: number;
+  isDecompression?: boolean;
 }
 
 const CompressionStats: React.FC<CompressionStatsProps> = ({

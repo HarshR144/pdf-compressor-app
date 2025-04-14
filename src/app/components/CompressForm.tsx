@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import FileUpload from './FileUpload';
 import CompressionStats from './CompressionStats';
+import PerformanceChart from './PerformanceChart';
 
 // Define a proper interface for the compression result
 interface CompressionResult {
@@ -11,6 +12,11 @@ interface CompressionResult {
   compressed_size: number;
   compression_ratio: number;
   compression_time?: number; // Optional if not always provided
+  performance?: {
+    gpu_time: number;
+    sequential_time: number;
+    speedup: number;
+  };
 }
 
 const CompressForm = () => {
@@ -30,6 +36,12 @@ const CompressForm = () => {
     
     if (!file) {
       setError('Please select a PDF file to compress.');
+      return;
+    }
+
+    // Check file size - limit to 10MB for this demo
+    if (file.size > 10 * 1024 * 1024) {
+      setError('File size exceeds 10MB limit.');
       return;
     }
 
@@ -139,13 +151,23 @@ const CompressForm = () => {
       </form>
 
       {compressionResult && (
-        <div className="mt-8">
+        <div className="mt-8 space-y-8">
           <CompressionStats
             originalSize={compressionResult.original_size}
             compressedSize={compressionResult.compressed_size}
             compressionRatio={compressionResult.compression_ratio}
-            compressionTime={compressionResult.compression_time}
+            compressionTime={compressionResult.performance?.gpu_time}
           />
+          
+          {/* Performance comparison chart */}
+          {compressionResult.performance && (
+            <PerformanceChart
+              gpuTime={compressionResult.performance.gpu_time}
+              sequentialTime={compressionResult.performance.sequential_time}
+              speedup={compressionResult.performance.speedup}
+              operationType="Compression"
+            />
+          )}
         </div>
       )}
     </div>

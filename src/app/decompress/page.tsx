@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import FileUpload from '../components/FileUpload';
 import CompressionStats from '../components/CompressionStats';
+import PerformanceChart from '../components/PerformanceChart';
 
 // Define a proper interface for the compression stats
 interface DecompressionStats {
@@ -10,6 +11,11 @@ interface DecompressionStats {
   compressedSize: number;
   compressionRatio: number;
   decompressTime: number;
+  performance?: {
+    gpu_time: number;
+    sequential_time: number;
+    speedup: number;
+  };
 }
 
 export default function DecompressPage() {
@@ -75,7 +81,8 @@ export default function DecompressPage() {
           originalSize: result.original_size,
           compressedSize: result.compressed_size,
           compressionRatio: result.compression_ratio,
-          decompressTime: result.decompression_time,
+          decompressTime: result.performance?.gpu_time || 0,
+          performance: result.performance
         });
       };
       
@@ -153,13 +160,24 @@ export default function DecompressPage() {
         </form>
 
         {decompressStats && (
-          <div className="mt-8">
+          <div className="mt-8 space-y-8">
             <CompressionStats
               originalSize={decompressStats.originalSize}
               compressedSize={decompressStats.compressedSize}
               compressionRatio={decompressStats.compressionRatio}
               compressionTime={decompressStats.decompressTime}
+              isDecompression={true}
             />
+            
+            {/* Performance comparison chart */}
+            {decompressStats.performance && (
+              <PerformanceChart
+                gpuTime={decompressStats.performance.gpu_time}
+                sequentialTime={decompressStats.performance.sequential_time}
+                speedup={decompressStats.performance.speedup}
+                operationType="Decompression"
+              />
+            )}
           </div>
         )}
 
