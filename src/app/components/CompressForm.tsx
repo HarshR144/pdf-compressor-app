@@ -40,10 +40,10 @@ const CompressForm = () => {
     }
 
     // Check file size - limit to 10MB for this demo
-    if (file.size > 10 * 1024 * 1024) {
-      setError('File size exceeds 10MB limit.');
-      return;
-    }
+    // if (file.size > 10 * 1024 * 1024) {
+    //   setError('File size exceeds 10MB limit.');
+    //   return;
+    // }
 
     setIsLoading(true);
     setError(null);
@@ -68,6 +68,7 @@ const CompressForm = () => {
       }
 
       const result = await response.json();
+      console.log(result);
       setCompressionResult(result);
       
       // Automatically download the compressed file
